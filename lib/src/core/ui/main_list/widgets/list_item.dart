@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/user/user.dart';
+import '../../../models/chat_model/chat.dart';
 import '../../chat/pages/chat.dart';
 
 class ListItem extends StatelessWidget {

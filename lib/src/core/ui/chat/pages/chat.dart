@@ -1,12 +1,11 @@
-import 'package:chat_flutter/src/core/ui/chat/widgets/chat_header.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
-
-import '../../../bloc/chat_service/chat_service.dart';
-import '../../../models/message/message.dart';
-import '../../../models/user/user.dart';
-import '../../../models/chat_model/chat.dart';
+import 'package:chat_flutter/src/core/models/message/message.dart';
+import 'package:chat_flutter/src/core/models/user/user.dart';
+import 'package:chat_flutter/src/core/models/chat_model/chat.dart';
+import 'package:chat_flutter/src/core/bloc/chat_service/chat_service.dart';
+import '../widgets/chat_header.dart';
 
 class ChatPage extends StatefulWidget {
   final User user;
@@ -30,42 +29,56 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _initializeChat() async {
-    User currentUser = User(id: 'currentUser', name: 'Current User');
+    try {
+      print('Initializing chat for user: ${widget.user.id}');
+      User currentUser = widget.user;
 
-    Chat chat = await _chatService.createChat(currentUser, widget.user);
-    setState(() {
-      _chat = chat;
-      _isLoading = false;
-    });
+      Chat chat = await _chatService.createChat(currentUser, widget.user);
+      print('Chat initialized: ${chat.id}');
+      setState(() {
+        _chat = chat;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error initializing chat: $e');
+    }
   }
 
   void _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      print('Picked file: ${file.name}');
-    } else {
-      print('File picking canceled');
+      if (result != null) {
+        PlatformFile file = result.files.first;
+        print('file: ${file.name}');
+      } else {
+        print('File picking cancel');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
   void _sendMessage() {
-    String message = _controller.text.trim();
-    if (message.isNotEmpty) {
-      Message newMessage = Message(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        senderId: 'currentUser',
-        receiverId: widget.user.id,
-        text: message,
-        timestamp: DateTime.now(),
-      );
-      _chatService.sendMessage(_chat.id, newMessage);
-      print('Sent message: $message');
-      _controller.clear();
-      setState(() {
-        _chat.messages.add(newMessage);
-      });
+    try {
+      String message = _controller.text.trim();
+      if (message.isNotEmpty) {
+        Message newMessage = Message(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          senderId: 'currentUser',
+          receiverId: widget.user.id,
+          text: message,
+          timestamp: DateTime.now(),
+        );
+        _chatService.sendMessage(_chat.id, newMessage);
+        print('message: $message');
+        _controller.clear();
+        setState(() {
+          _chat.messages.add(newMessage);
+        });
+      }
+    } catch (e) {
+      print('Error sending: $e');
     }
   }
 
