@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../models/user/user.dart';
 import '../../chat/pages/chat.dart';
 
 class ListItem extends StatelessWidget {
-  final int index;
+  final User user;
 
-  const ListItem({super.key, required this.index});
+  const ListItem({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class ListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatPage(index: index,),
+            builder: (context) => ChatPage(user: user),
           ),
         );
       },
@@ -40,9 +41,9 @@ class ListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Chat ${index + 1}',
+                  user.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: CupertinoColors.black,
                   ),
@@ -61,7 +62,7 @@ class ListItem extends StatelessWidget {
                     Text(
                       'Hello',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: CupertinoColors.systemGrey,
                       ),
                     ),

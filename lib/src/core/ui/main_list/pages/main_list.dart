@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import '../../../models/user/user.dart';
 import '../widgets/header_widget.dart';
 import '../widgets/list_item.dart';
 
 class MainList extends StatelessWidget {
-  const MainList({super.key});
+  MainList({super.key});
+
+  final List<User> users = [
+    User(id: 'user1', name: 'Виктор Власов'),
+    User(id: 'user2', name: 'Саша Алексеев'),
+    User(id: 'user3', name: 'Петр Жаринов'),
+    User(id: 'user4', name: 'Алина Жукова'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +28,9 @@ class MainList extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                return ListItem(index: index);
+                return ListItem(user: users[index]);
               },
-              childCount: 5,
+              childCount: users.length,
             ),
           ),
         ],

@@ -25,7 +25,11 @@ class HeaderWidget extends StatelessWidget {
           alignment: Alignment.bottomLeft,
           child: Text(
             title,
-            style: const TextStyle(fontSize: 28.0, color: Colors.black),
+            style: const TextStyle(
+                fontSize: 28.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+            ),
           ),
         ),
       ),
