@@ -31,6 +31,7 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() {
     String message = _controller.text.trim();
     if (message.isNotEmpty) {
+      // Send the message (e.g., send to the server or display it in the chat)
       print('Sent message: $message');
       _controller.clear();
     }
@@ -40,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: ChatHeader(),
+        title: const ChatHeader(),
       ),
       body: Column(
         children: [
