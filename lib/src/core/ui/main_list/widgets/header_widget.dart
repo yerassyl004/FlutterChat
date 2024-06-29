@@ -26,9 +26,9 @@ class HeaderWidget extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black
+              fontSize: 28.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
         ),
@@ -36,12 +36,21 @@ class HeaderWidget extends StatelessWidget {
       backgroundColor: Colors.white,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CupertinoSearchTextField(
-            onChanged: onSearchChanged,
-            onSubmitted: onSearchSubmitted,
-          ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CupertinoSearchTextField(
+                onChanged: onSearchChanged,
+                onSubmitted: onSearchSubmitted,
+              ),
+            ),
+            const Divider(
+              height: 1,
+              thickness: 0.5,
+              color: Colors.grey,
+            ),
+          ],
         ),
       ),
     );

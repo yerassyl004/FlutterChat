@@ -126,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
                 final message = _chat.messages[index];
                 final isCurrentUser = message.senderId == widget.user.id;
 
-                // Checks message in one day or not
+                // Check message in one day or not
                 bool showDateDivider = index == 0 ||
                     !_isSameDay(message.timestamp, _chat.messages[index - 1].timestamp);
 
@@ -142,7 +142,7 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             const Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(left: 16),
+                                padding: EdgeInsets.only(left: 16.0),
                                 child: Divider(
                                   color: Colors.grey,
                                   thickness: 1,
@@ -150,10 +150,10 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                               color: Colors.white,
                               child: Text(
-                                DateFormat('yyyy-MM-dd').format(message.timestamp),
+                                DateFormat('dd.MM.yy').format(message.timestamp),
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -163,7 +163,7 @@ class _ChatPageState extends State<ChatPage> {
                             ),
                             const Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(right: 16),
+                                padding: EdgeInsets.only(right: 16.0),
                                 child: Divider(
                                   color: Colors.grey,
                                   thickness: 1,
@@ -176,29 +176,41 @@ class _ChatPageState extends State<ChatPage> {
                     Align(
                       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        padding: EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: isCurrentUser ? Colors.green.shade300 : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(21.0),
+                            topRight: const Radius.circular(21.0),
+                            bottomLeft: Radius.circular(isCurrentUser ? 21.0 : 0),
+                            bottomRight: Radius.circular(isCurrentUser ? 0 : 21.0),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              message.text,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              DateFormat('hh:mm').format(message.timestamp),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    message.text,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  DateFormat('hh:mm').format(message.timestamp),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
