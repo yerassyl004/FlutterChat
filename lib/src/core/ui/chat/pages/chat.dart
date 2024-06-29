@@ -62,7 +62,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   String _reciverId() {
-    switch  (widget.user.id) {
+    switch (widget.user.id) {
       case '1':
         return '2';
       case '2':
@@ -81,7 +81,10 @@ class _ChatPageState extends State<ChatPage> {
       String message = _controller.text.trim();
       if (message.isNotEmpty) {
         Message newMessage = Message(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          id: DateTime
+              .now()
+              .millisecondsSinceEpoch
+              .toString(),
           senderId: widget.user.id,
           receiverId: _reciverId(),
           text: message,

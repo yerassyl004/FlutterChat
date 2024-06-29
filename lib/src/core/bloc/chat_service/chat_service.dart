@@ -7,8 +7,40 @@ import '../../models/user/user.dart';
 class ChatService {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
+  Future<List<Message>> fetchLastMessages(String chatId) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    try {
+      String? chatJson = await storage.read(key: chatId);
+      if (chatJson != null) {
+        Map<String, dynamic> chatMap = jsonDecode(chatJson);
+        var chat = Chat.fromJson(chatMap);
+        return chat.messages;
+      } else {
+        Chat newChat = Chat(id: chatId, messages: []);
+        await saveChat(newChat);
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching messages: $e');
+      return [];
+    }
+  }
+
+  Future<Message?> getLastMessage(String chatId) async {
+    try {
+      List<Message> messages = await fetchLastMessages(chatId);
+      if (messages.isNotEmpty) {
+        return messages.last;
+      }
+    } catch (e) {
+      print('Error fetching last message: $e');
+    }
+    return null;
+  }
+
   Future<Chat> createChat(User currentUser, User otherUser) async {
-    String chatId = _generateChatId(currentUser.id, otherUser.id);
+    String chatId = generateChatId(currentUser.id, otherUser.id);
 
     try {
       String? chatJson = await storage.read(key: chatId);
@@ -34,6 +66,9 @@ class ChatService {
         Chat chat = Chat.fromJson(chatMap);
         chat.messages.add(message);
         await saveChat(chat);
+      } else {
+        Chat newChat = Chat(id: chatId, messages: [message]);
+        await saveChat(newChat);
       }
     } catch (e) {
       print('Error sending message: $e');
@@ -48,7 +83,7 @@ class ChatService {
     }
   }
 
-  String _generateChatId(String userId1, String userId2) {
+  String generateChatId(String userId1, String userId2) {
     return userId1.hashCode <= userId2.hashCode
         ? '$userId1-$userId2'
         : '$userId2-$userId1';
