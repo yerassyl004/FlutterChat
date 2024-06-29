@@ -105,6 +105,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: ChatHeader(user: widget.user),
       ),
@@ -128,8 +129,8 @@ class _ChatPageState extends State<ChatPage> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: isCurrentUser
-                          ? Colors.blue[100]
-                          : Colors.green[100],
+                          ? Colors.green.shade300
+                          : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -171,7 +172,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: 'Type a message',
+                      hintText: 'Сообщение',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,

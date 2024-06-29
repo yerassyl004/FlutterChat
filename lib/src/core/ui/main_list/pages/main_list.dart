@@ -101,6 +101,7 @@ class _MainListState extends State<MainList> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(

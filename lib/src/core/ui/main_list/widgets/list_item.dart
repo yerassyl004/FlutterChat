@@ -10,7 +10,7 @@ class ListItem extends StatelessWidget {
   final User receiver;
   final Message? lastMessage;
 
-  ListItem({super.key, required this.user, required this.receiver, this.lastMessage});
+  const ListItem({super.key, required this.user, required this.receiver, this.lastMessage});
 
   @override
   Widget build(BuildContext context) {
