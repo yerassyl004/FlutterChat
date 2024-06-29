@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../models/user/user.dart';
+
 class ChatHeader extends StatelessWidget {
-  const ChatHeader({super.key});
+  final User user;
+  const ChatHeader({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -16,19 +19,19 @@ class ChatHeader extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        SizedBox(width: 20),
-        const Expanded(
+        const SizedBox(width: 20),
+        Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Виктор Власов',
-                  style: TextStyle(
+                  user.name,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   'В сети',
                   style: TextStyle(
                     fontSize: 12,

@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:intl/intl.dart';
+import '../../../models/user/user.dart';
+import '../../../models/message/message.dart';
 import '../../chat/pages/chat.dart';
 
 class ListItem extends StatelessWidget {
-  final int index;
+  final User user;
+  final User receiver;
+  final Message? lastMessage;
 
-  const ListItem({super.key, required this.index});
+  ListItem({super.key, required this.user, required this.receiver, this.lastMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +19,7 @@ class ListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatPage(index: index,),
+            builder: (context) => ChatPage(user: user, reciever: receiver),
           ),
         );
       },
@@ -40,39 +44,49 @@ class ListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Chat ${index + 1}',
+                  user.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: CupertinoColors.black,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Row(
+                lastMessage != null && lastMessage!.senderId == user.id ?
+                Row(
                   children: [
-                    Text(
-                      'you',
+                    const Text(
+                      'Вы:',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: CupertinoColors.black,
                       ),
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 4),
                     Text(
-                      'Hello',
-                      style: TextStyle(
-                        fontSize: 14,
+                      lastMessage != null ? lastMessage!.text : 'No messages',
+                      style: const TextStyle(
+                        fontSize: 12,
                         color: CupertinoColors.systemGrey,
                       ),
                     ),
                   ],
                 )
+                    : Text(
+                  lastMessage != null ? lastMessage!.text : 'No messages',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: CupertinoColors.systemGrey,
+                  ),
+                ),
               ],
             ),
             const Spacer(),
-            const Text(
-              'Вчера',
-              style: TextStyle(
+            Text(
+              lastMessage != null
+                  ? DateFormat('hh:mm').format(lastMessage!.timestamp)
+                  : '',
+              style: const TextStyle(
                 fontSize: 14,
                 color: CupertinoColors.systemGrey,
               ),
