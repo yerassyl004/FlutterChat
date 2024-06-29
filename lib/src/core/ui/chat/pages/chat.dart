@@ -9,8 +9,9 @@ import '../widgets/chat_header.dart';
 
 class ChatPage extends StatefulWidget {
   final User user;
+  final User reciever;
 
-  const ChatPage({super.key, required this.user});
+  const ChatPage({super.key, required this.user, required this.reciever});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -32,8 +33,9 @@ class _ChatPageState extends State<ChatPage> {
     try {
       print('Initializing chat for user: ${widget.user.id}');
       User currentUser = widget.user;
+      User reciever = widget.reciever;
 
-      Chat chat = await _chatService.createChat(currentUser, widget.user);
+      Chat chat = await _chatService.createChat(currentUser, reciever);
       print('Chat initialized: ${chat.id}');
       setState(() {
         _chat = chat;
@@ -59,14 +61,29 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  String _reciverId() {
+    switch  (widget.user.id) {
+      case '1':
+        return '2';
+      case '2':
+        return '1';
+      case '3':
+        return '4';
+      case '4':
+        return '3';
+      default:
+        return '';
+    }
+  }
+
   void _sendMessage() {
     try {
       String message = _controller.text.trim();
       if (message.isNotEmpty) {
         Message newMessage = Message(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
-          senderId: 'currentUser',
-          receiverId: widget.user.id,
+          senderId: widget.user.id,
+          receiverId: _reciverId(),
           text: message,
           timestamp: DateTime.now(),
         );
@@ -97,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
               itemCount: _chat.messages.length,
               itemBuilder: (context, index) {
                 final message = _chat.messages[index];
-                bool isCurrentUser = message.senderId == 'currentUser';
+                bool isCurrentUser = message.senderId == widget.user.id;
                 return Align(
                   alignment: isCurrentUser
                       ? Alignment.centerRight

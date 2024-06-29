@@ -65,6 +65,20 @@ class MainList extends StatelessWidget {
     }
   }
 
+  int _reciverIndex(int index) {
+    switch (index) {
+      case 0:
+        return 1;
+      case 1:
+        return 0;
+      case 2:
+        return 3;
+      case 3:
+        return 2;
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     _initializeChats();
@@ -80,7 +94,8 @@ class MainList extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                return ListItem(user: users[index]);
+
+                return ListItem(user: users[index], reviever: users[_reciverIndex(index)]);
               },
               childCount: users.length,
             ),

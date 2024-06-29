@@ -7,8 +7,9 @@ import '../../chat/pages/chat.dart';
 
 class ListItem extends StatelessWidget {
   final User user;
+  final User reviever;
 
-  const ListItem({super.key, required this.user});
+  const ListItem({super.key, required this.user, required this.reviever});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class ListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatPage(user: user),
+            builder: (context) => ChatPage(user: user, reciever: reviever),
           ),
         );
       },
