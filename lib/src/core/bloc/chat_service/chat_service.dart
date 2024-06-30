@@ -1,5 +1,7 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../../models/chat_model/chat.dart';
 import '../../models/message/message.dart';
 import '../../models/user/user.dart';
@@ -83,9 +85,31 @@ class ChatService {
     }
   }
 
+  Future<void> markMessagesAsRead(String chatId, String userId) async {
+    try {
+      String? chatJson = await storage.read(key: chatId);
+      if (chatJson != null) {
+        Map<String, dynamic> chatMap = jsonDecode(chatJson);
+        Chat chat = Chat.fromJson(chatMap);
+
+        chat.messages = chat.messages.map((message) {
+          if (message.receiverId == userId && !message.isRead) {
+            return message.markAsRead();
+          }
+          return message;
+        }).toList();
+
+        await saveChat(chat);
+      }
+    } catch (e) {
+      print('Error marking messages as read: $e');
+    }
+  }
+
   String generateChatId(String userId1, String userId2) {
     return userId1.hashCode <= userId2.hashCode
         ? '$userId1-$userId2'
         : '$userId2-$userId1';
   }
 }
+

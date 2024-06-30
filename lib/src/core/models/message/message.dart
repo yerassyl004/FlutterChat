@@ -4,6 +4,7 @@ class Message {
   final String receiverId;
   final String text;
   final DateTime timestamp;
+  final bool isRead;
 
   Message({
     required this.id,
@@ -11,6 +12,7 @@ class Message {
     required this.receiverId,
     required this.text,
     required this.timestamp,
+    this.isRead = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class Message {
       'receiverId': receiverId,
       'text': text,
       'timestamp': timestamp.toIso8601String(),
+      'isRead': isRead,
     };
   }
 
@@ -30,6 +33,18 @@ class Message {
       receiverId: json['receiverId'],
       text: json['text'],
       timestamp: DateTime.parse(json['timestamp']),
+      isRead: json['isRead'] ?? false,
+    );
+  }
+
+  Message markAsRead() {
+    return Message(
+      id: id,
+      senderId: senderId,
+      receiverId: receiverId,
+      text: text,
+      timestamp: timestamp,
+      isRead: true,
     );
   }
 }
