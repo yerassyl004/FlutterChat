@@ -140,172 +140,180 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         title: ChatHeader(user: widget.user),
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                itemCount: _chat.messages.length,
-                itemBuilder: (context, index) {
-                  final message = _chat.messages[index];
-                  final isCurrentUser = message.senderId == widget.user.id;
-                  final isNextMessageFromCurrentUser = _isNextMessageFromCurrentUser(index);
-                  final isPreviousMessageFromCurrentUser = _isPreviousMessageFromCurrentUser(index);
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                  itemCount: _chat.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = _chat.messages[index];
+                    final isCurrentUser = message.senderId == widget.user.id;
+                    final isNextMessageFromCurrentUser = _isNextMessageFromCurrentUser(
+                        index);
+                    final isPreviousMessageFromCurrentUser = _isPreviousMessageFromCurrentUser(
+                        index);
 
-                  // Check message in one day or not
-                  bool showDateDivider = index == 0 ||
-                      !_isSameDay(message.timestamp,
-                          _chat.messages[index - 1].timestamp);
+                    // Check message in one day or not
+                    bool showDateDivider = index == 0 ||
+                        !_isSameDay(message.timestamp,
+                            _chat.messages[index - 1].timestamp);
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (showDateDivider)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 16.0),
-                                  child: Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                color: Colors.white,
-                                child: Text(
-                                  DateFormat('dd.MM.yy').format(
-                                      message.timestamp),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              const Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      Align(
-                        alignment: isCurrentUser
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: isCurrentUser
-                                ? Colors.green.shade300
-                                : Colors.grey.shade200,
-                            borderRadius: BorderRadius.only(
-                              topLeft: !isCurrentUser && isPreviousMessageFromCurrentUser ?
-                              Radius.circular(isNextMessageFromCurrentUser ? 23.0 : 8) :
-                              const Radius.circular(21.0),
-
-                              topRight: isCurrentUser && isPreviousMessageFromCurrentUser ?
-                              Radius.circular(isNextMessageFromCurrentUser ? 23.0 : 8) :
-                              const Radius.circular(21.0),
-                              bottomLeft: Radius.circular(
-                                  isCurrentUser ? 21.0 : 0),
-                              bottomRight: Radius.circular(
-                                  isCurrentUser ? 0 : 21.0),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: isCurrentUser
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      message.text,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (showDateDivider)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 16.0),
+                                    child: Divider(
+                                      color: Colors.grey,
+                                      thickness: 1,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    DateFormat('hh:mm').format(
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  color: Colors.white,
+                                  child: Text(
+                                    DateFormat('dd.MM.yy').format(
                                         message.timestamp),
                                     style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
                                     ),
                                   ),
-                                  const SizedBox(width: 4),
-                                  if (isCurrentUser)
-                                  Image.asset(
-                                     message.isRead ?
-                                    'assets/images/read.png' :
-                                    'assets/images/unread.png',
-                                    width: 16,
+                                ),
+                                const Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Divider(
+                                      color: Colors.grey,
+                                      thickness: 1,
+                                    ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        Align(
+                          alignment: isCurrentUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isCurrentUser
+                                  ? Colors.green.shade300
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.only(
+                                topLeft: !isCurrentUser &&
+                                    isPreviousMessageFromCurrentUser ?
+                                Radius.circular(
+                                    isNextMessageFromCurrentUser ? 23.0 : 8) :
+                                const Radius.circular(21.0),
+
+                                topRight: isCurrentUser &&
+                                    isPreviousMessageFromCurrentUser ?
+                                Radius.circular(
+                                    isNextMessageFromCurrentUser ? 23.0 : 8) :
+                                const Radius.circular(21.0),
+                                bottomLeft: Radius.circular(
+                                    isCurrentUser ? 21.0 : 0),
+                                bottomRight: Radius.circular(
+                                    isCurrentUser ? 0 : 21.0),
                               ),
-                            ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: isCurrentUser
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        message.text,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      DateFormat('hh:mm').format(
+                                          message.timestamp),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    if (isCurrentUser)
+                                      Image.asset(
+                                        message.isRead ?
+                                        'assets/images/read.png' :
+                                        'assets/images/unread.png',
+                                        width: 16,
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+                      ],
+                    );
+                  },
+                )
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.attach_file),
+                    onPressed: _pickFile,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Сообщение',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16),
                       ),
-                    ],
-                  );
-                },
-              )
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.attach_file),
-                  onPressed: _pickFile,
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Сообщение',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
