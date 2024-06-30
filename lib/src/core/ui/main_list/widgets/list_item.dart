@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../models/user/user.dart';
 import '../../../models/message/message.dart';
 import '../../chat/pages/chat.dart';
@@ -9,13 +10,19 @@ class ListItem extends StatelessWidget {
   final User receiver;
   final Message? lastMessage;
 
-  const ListItem({super.key,
+  const ListItem({
+    super.key,
     required this.user,
     required this.receiver,
-    this.lastMessage});
+    this.lastMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String timeAgo = lastMessage != null
+        ? timeago.format(lastMessage!.timestamp, locale: 'ru_short')
+        : '';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -29,8 +36,9 @@ class ListItem extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 16.0),
+              vertical: 10.0,
+              horizontal: 16.0,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -77,7 +85,9 @@ class ListItem extends StatelessWidget {
                         ],
                       )
                           : Text(
-                        lastMessage != null ? lastMessage!.text : 'No messages',
+                        lastMessage != null
+                            ? lastMessage!.text
+                            : 'No messages',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -89,12 +99,17 @@ class ListItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  lastMessage != null ? DateFormat('HH:mm').format(lastMessage!.timestamp) : '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      timeAgo,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
