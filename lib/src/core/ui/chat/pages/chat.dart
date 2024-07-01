@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:chat_flutter/src/core/models/message/message.dart';
 import 'package:chat_flutter/src/core/models/user/user.dart';
 import 'package:chat_flutter/src/core/models/chat_model/chat.dart';
-import 'package:chat_flutter/src/core/bloc/chat_service/chat_service.dart';
+import 'package:chat_flutter/src/core/service/chat_service/chat_service.dart';
 import '../widgets/chat_header.dart';
 
 class ChatPage extends StatefulWidget {

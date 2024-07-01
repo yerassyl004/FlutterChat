@@ -10,7 +10,7 @@ class ChatService {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<List<Message>> fetchLastMessages(String chatId) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     try {
       String? chatJson = await storage.read(key: chatId);
