@@ -25,7 +25,7 @@ class ListItem extends StatelessWidget {
     } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes} минуты назад';
     } else if (difference.inHours < 24 && now.day == timestamp.day) {
-      return DateFormat('hh:mm a').format(timestamp);
+      return DateFormat('hh:mm').format(timestamp);
     } else if (difference.inHours < 48 && now.day != timestamp.day) {
       return 'Вчера';
     } else {
@@ -44,7 +44,7 @@ class ListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatPage(user: user, reciever: receiver),
+            builder: (context) => ChatPage(user: user, receiver: receiver),
           ),
         );
       },
@@ -133,9 +133,8 @@ class ListItem extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Divider(
-              height: 1,
-              thickness: 0.5,
-              color: Colors.grey,
+              height: 2,
+              color: Color.fromARGB(237, 242, 247, 255),
             ),
           ),
         ],

@@ -47,8 +47,7 @@ class HeaderWidget extends StatelessWidget {
             ),
             const Divider(
               height: 1,
-              thickness: 0.5,
-              color: Colors.grey,
+              color: Color.fromARGB(237, 242, 247, 255),
             ),
           ],
         ),
