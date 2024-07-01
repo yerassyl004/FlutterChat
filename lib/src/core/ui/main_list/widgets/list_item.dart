@@ -17,10 +17,27 @@ class ListItem extends StatelessWidget {
     this.lastMessage,
   });
 
+  String getCustomTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 1) {
+      return 'Только что';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} минуты назад';
+    } else if (difference.inHours < 24 && now.day == timestamp.day) {
+      return DateFormat('hh:mm a').format(timestamp);
+    } else if (difference.inHours < 48 && now.day != timestamp.day) {
+      return 'Вчера';
+    } else {
+      return DateFormat('dd MMM yyyy').format(timestamp);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String timeAgo = lastMessage != null
-        ? timeago.format(lastMessage!.timestamp, locale: 'ru_short')
+    String customTimestamp = lastMessage != null
+        ? getCustomTimestamp(lastMessage!.timestamp)
         : '';
 
     return GestureDetector(
@@ -103,7 +120,7 @@ class ListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      timeAgo,
+                      customTimestamp,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
