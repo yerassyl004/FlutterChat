@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../../models/user/user.dart';
 import '../../../models/message/message.dart';
 import '../../chat/pages/chat.dart';
@@ -59,9 +58,9 @@ class ListItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage('assets/images/profile.png'),
+                  backgroundImage: AssetImage(user.image),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
-import '../../../bloc/chat_service/chat_service.dart';
+import '../../../service/chat_service/chat_service.dart';
 import '../../../models/user/user.dart';
 import '../../../models/chat_model/chat.dart';
 import '../../../models/message/message.dart';
@@ -19,13 +19,14 @@ class _MainListState extends State<MainList> with RouteAware {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
   final ChatService _chatService = ChatService();
   final List<User> users = [
-    User(id: '1', name: 'Виктор Власов', chatId: '1-2'),
-    User(id: '2', name: 'Саша Алексеев', chatId: '1-2'),
-    User(id: '3', name: 'Петр Жаринов', chatId: '3-4'),
-    User(id: '4', name: 'Алина Жукова', chatId: '3-4'),
+    User(id: '1', name: 'Виктор Власов', chatId: '1-2', image: 'assets/images/profile.png'),
+    User(id: '2', name: 'Саша Алексеев', chatId: '1-2', image: 'assets/images/sasha.png'),
+    User(id: '3', name: 'Петр Жаринов', chatId: '3-4', image: 'assets/images/petr.png'),
+    User(id: '4', name: 'Алина Жукова', chatId: '3-4',  image: 'assets/images/alina.png'),
   ];
   bool _isLoading = true;
   late List<Chat> chats;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -98,8 +99,19 @@ class _MainListState extends State<MainList> with RouteAware {
     await _initializeChats();
   }
 
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<User> filteredUsers = users
+        .where((user) =>
+        user.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: _isLoading
@@ -110,24 +122,24 @@ class _MainListState extends State<MainList> with RouteAware {
           slivers: <Widget>[
             HeaderWidget(
               title: 'Чаты',
-              onSearchChanged: (String value) {},
+              onSearchChanged: _onSearchChanged,
               onSearchSubmitted: (String value) {},
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
                   return FutureBuilder<Message?>(
-                    future: _chatService.getLastMessage(users[index].chatId),
+                    future: _chatService.getLastMessage(filteredUsers[index].chatId),
                     builder: (context, snapshot) {
                       return ListItem(
-                        user: users[index],
+                        user: filteredUsers[index],
                         receiver: users[_receiverIndex(index)],
                         lastMessage: snapshot.data,
                       );
                     },
                   );
                 },
-                childCount: users.length,
+                childCount: filteredUsers.length,
               ),
             ),
           ],
