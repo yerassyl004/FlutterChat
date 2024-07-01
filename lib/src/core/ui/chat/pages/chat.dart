@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:chat_flutter/src/core/models/message/message.dart';
 import 'package:chat_flutter/src/core/models/user/user.dart';
 import 'package:chat_flutter/src/core/models/chat_model/chat.dart';
 import 'package:chat_flutter/src/core/service/chat_service/chat_service.dart';
+import '../widgets/chat_bottom.dart';
 import '../widgets/chat_header.dart';
 
 class ChatPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _ChatPageState extends State<ChatPage> {
   final ChatService _chatService = ChatService();
   late Chat _chat;
   bool _isLoading = true;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -38,15 +40,18 @@ class _ChatPageState extends State<ChatPage> {
       Chat chat = await _chatService.createChat(currentUser, receiver);
       print('Chat initialized: ${chat.id}');
 
-      // Mark messages as read
       await _chatService.markMessagesAsRead(chat.id, currentUser.id);
 
-      // Fetch updated chat
       Chat updatedChat = await _chatService.createChat(currentUser, receiver);
 
       setState(() {
         _chat = updatedChat;
         _isLoading = false;
+      });
+
+      // Scroll to bottom initially
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _scrollToBottom();
       });
     } catch (e) {
       print('Error initializing chat: $e');
@@ -88,7 +93,10 @@ class _ChatPageState extends State<ChatPage> {
       String message = _controller.text.trim();
       if (message.isNotEmpty) {
         Message newMessage = Message(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          id: DateTime
+              .now()
+              .millisecondsSinceEpoch
+              .toString(),
           senderId: widget.user.id,
           receiverId: _receiverId(),
           text: message,
@@ -100,16 +108,33 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           _chat.messages.add(newMessage);
         });
+
+        _scrollToBottom();
       }
     } catch (e) {
       print('Error sending message: $e');
     }
   }
 
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
         date1.month == date2.month &&
         date1.day == date2.day;
+  }
+
+  bool _isToday(DateTime dateTime) {
+    final now = DateTime.now();
+    return now.year == dateTime.year &&
+        now.month == dateTime.month &&
+        now.day == dateTime.day;
   }
 
   bool _isNextMessageFromCurrentUser(int currentIndex) {
@@ -148,16 +173,22 @@ class _ChatPageState extends State<ChatPage> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
+                reverse: true, // Start rendering items from the end of the list
+                controller: _scrollController,
                 itemCount: _chat.messages.length,
                 itemBuilder: (context, index) {
-                  final message = _chat.messages[index];
+                  final reversedIndex = _chat.messages.length - 1 - index;
+                  final message = _chat.messages[reversedIndex];
                   final isCurrentUser = message.senderId == widget.user.id;
-                  final isNextMessageFromCurrentUser = _isNextMessageFromCurrentUser(index);
-                  final isPreviousMessageFromCurrentUser = _isPreviousMessageFromCurrentUser(index);
+                  final isNextMessageFromCurrentUser =
+                  _isNextMessageFromCurrentUser(reversedIndex);
+                  final isPreviousMessageFromCurrentUser =
+                  _isPreviousMessageFromCurrentUser(reversedIndex);
 
                   // Check if message is on the same day or not
-                  bool showDateDivider = index == 0 ||
-                      !_isSameDay(message.timestamp, _chat.messages[index - 1].timestamp);
+                  bool showDateDivider = reversedIndex == 0 ||
+                      !_isSameDay(message.timestamp,
+                          _chat.messages[reversedIndex - 1].timestamp);
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,33 +200,36 @@ class _ChatPageState extends State<ChatPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 16.0),
+                                  padding: EdgeInsets.only(left: 16.0),
                                   child: Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
+                                    height: 3,
+                                    color: Color.fromRGBO(156, 182, 201, 1),
                                   ),
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 8),
                                 color: Colors.white,
                                 child: Text(
-                                  DateFormat('dd.MM.yy').format(message.timestamp),
+                                  _isToday(message.timestamp)
+                                      ? 'Сегодня'
+                                      : DateFormat('dd.MM.yy').format(message.timestamp),
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
+                                    color: Color.fromRGBO(156, 182, 201, 1),
                                   ),
                                 ),
                               ),
-                              Expanded(
+                              const Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
+                                  padding: EdgeInsets.only(right: 16.0),
                                   child: Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
+                                    color: Color.fromRGBO(156, 182, 201, 1),
+                                    height: 4,
                                   ),
                                 ),
                               ),
@@ -212,28 +246,29 @@ class _ChatPageState extends State<ChatPage> {
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: isCurrentUser
-                                ? Colors.green.shade300
-                                : Colors.grey.shade200,
+                                ? const Color.fromRGBO(61, 236, 119, 1)
+                                : const Color.fromRGBO(237, 242, 247, 1),
                             borderRadius: BorderRadius.only(
                               topLeft: !isCurrentUser &&
-                                  isPreviousMessageFromCurrentUser ?
-                              Radius.circular(
-                                  isNextMessageFromCurrentUser ? 23.0 : 8) :
-                              const Radius.circular(21.0),
-
+                                  isPreviousMessageFromCurrentUser
+                                  ? Radius.circular(
+                                  isNextMessageFromCurrentUser ? 23.0 : 8)
+                                  : const Radius.circular(21.0),
                               topRight: isCurrentUser &&
-                                  isPreviousMessageFromCurrentUser ?
-                              Radius.circular(
-                                  isNextMessageFromCurrentUser ? 23.0 : 8) :
-                              const Radius.circular(21.0),
-                              bottomLeft: Radius.circular(
-                                  isCurrentUser ? 21.0 : 0),
-                              bottomRight: Radius.circular(
-                                  isCurrentUser ? 0 : 21.0),
+                                  isPreviousMessageFromCurrentUser
+                                  ? Radius.circular(
+                                  isNextMessageFromCurrentUser ? 23.0 : 8)
+                                  : const Radius.circular(21.0),
+                              bottomLeft:
+                              Radius.circular(isCurrentUser ? 21.0 : 0),
+                              bottomRight:
+                              Radius.circular(isCurrentUser ? 0 : 21.0),
                             ),
                           ),
                           child: Column(
-                            crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                            crossAxisAlignment: isCurrentUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             children: [
                               Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -249,7 +284,8 @@ class _ChatPageState extends State<ChatPage> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    DateFormat('hh:mm').format(message.timestamp),
+                                    DateFormat('hh:mm')
+                                        .format(message.timestamp),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.black54,
@@ -258,7 +294,9 @@ class _ChatPageState extends State<ChatPage> {
                                   const SizedBox(width: 4),
                                   if (isCurrentUser)
                                     Image.asset(
-                                      message.isRead ? 'assets/images/read.png' : 'assets/images/unread.png',
+                                      message.isRead
+                                          ? 'assets/images/read.png'
+                                          : 'assets/images/unread.png',
                                       width: 16,
                                     ),
                                 ],
@@ -272,36 +310,11 @@ class _ChatPageState extends State<ChatPage> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.attach_file),
-                    onPressed: _pickFile,
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: 'Сообщение',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _sendMessage,
-                  ),
-                ],
-              ),
-            ),
+            ChatInputWidget(
+              controller: _controller,
+              onPickFile: _pickFile,
+              onSendMessage: _sendMessage,
+            )
           ],
         ),
       ),

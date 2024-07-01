@@ -134,7 +134,7 @@ class ListItem extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Divider(
               height: 2,
-              color: Color.fromARGB(237, 242, 247, 255),
+              color: Color.fromRGBO(237, 242, 247, 1),
             ),
           ),
         ],

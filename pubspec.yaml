@@ -72,6 +72,8 @@ flutter:
      - assets/images/petr.png
      - assets/images/alina.png
      - assets/images/arrow_left.png
+     - assets/images/attach.png
+     - assets/images/picker.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
